@@ -1,0 +1,618 @@
+units: # Default units. These may be overrided where desired.
+  pipe_diameter: nominal # 'in', 'ft', 'nominal', 'mm', 'm'
+  length: ft # 'in', 'ft', 'mm', 'm'
+  pressure: psi # 'psi', 'psf', 'Pa', 'kPa'
+  volume: gal # 'gal', 'L', 'in**3', 'ft**3', 'm**3', 'ac*ft'
+  time: s # 's', 'min', 'hr', 'day'
+  volume_flowrate: [gal, min] # [<volume>, <time>]
+
+n_iterations: 12 # Number of pressure/flow iterations to simulate
+root_component: upper_tank
+
+k_factors: # Minor head loss coefficients
+  thru: 0.4
+  turn: 1.0
+
+sprinkler_models:
+  impulse:
+    pressure: [5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35]
+    volume_flowrate: [
+      6.83, 7.77, 8.75, 9.53, 10.30, 10.82, 11.87, 12.29, 12.84, 13.18, 13.53,
+      14.70, 15.53]
+    pressure_unit: psi # Optional default override
+    volume_flowrate_unit: [in**3, s] # Optional default override
+    saturated_flowrate: 20
+
+component_defaults: # Override defaults
+  junction:
+    downstream_pipes: null
+    sprinkler_id: null
+    regulator_pressure: null
+  pipe:
+    downstream_junction: null
+    diameter: null
+    length: null
+    delta_z: 0
+    k_factor: 0
+
+components: # Define system layout
+  AN:
+    type: junction
+    sprinkler_id: s32
+  s32:
+    type: sprinkler
+    model: impulse
+  AM_AN:
+    type: pipe
+    downstream_junction: AN
+    diameter: 1/2
+    length: 330
+    delta_z: -160.08
+    k_factor: thru
+  AM:
+    type: junction
+    downstream_pipes: AM_AN
+    sprinkler_id: s31
+  s31:
+    type: sprinkler
+    model: impulse
+    regulator_pressure: 30
+  AL_AM:
+    type: pipe
+    downstream_junction: AM
+    diameter: 1
+    length: 100
+    k_factor: thru
+  AL:
+    type: junction
+    downstream_pipes: AL_AM
+    sprinkler_id: s30
+  s30:
+    type: sprinkler
+    model: impulse
+  AK_AL:
+    type: pipe
+    downstream_junction: AL
+    diameter: 1
+    length: 100
+    k_factor: thru
+  AK:
+    type: junction
+    downstream_pipes: AK_AL
+    sprinkler_id: s29
+  s29:
+    type: sprinkler
+    model: impulse
+  AH_AK:
+    type: pipe
+    downstream_junction: AK
+    diameter: 1
+    length: 100
+    delta_z: -49.33
+    k_factor: thru
+  AU:
+    type: junction
+    sprinkler_id: s27
+  s27:
+    type: sprinkler
+    model: impulse
+  AH_AU:
+    type: pipe
+    downstream_junction: AU
+    diameter: 1/2
+    length: 108.9
+    k_factor: turn
+  AI:
+    type: junction
+    sprinkler_id: s28
+  s28:
+    type: sprinkler
+    model: impulse
+  AH_AI:
+    type: pipe
+    downstream_junction: AI
+    diameter: 1/2
+    length: 108.9
+    k_factor: turn
+  AH:
+    type: junction
+    downstream_pipes: [AH_AU, AH_AK, AH_AI]
+  AG_AH:
+    type: pipe
+    downstream_junction: AH
+    diameter: 1
+    length: 50
+    k_factor: thru
+  AG:
+    type: junction
+    downstream_pipes: AG_AH
+  AD_AG:
+    type: pipe
+    downstream_junction: AG
+    diameter: 1
+    length: 50
+    delta_z: -25.88
+    k_factor: thru
+  AF:
+    type: junction
+    sprinkler_id: s25
+  s25:
+    type: sprinkler
+    model: impulse
+  AD_AF:
+    type: pipe
+    downstream_junction: AF
+    diameter: 1/2
+    length: 99
+    k_factor: turn
+  AE:
+    type: junction
+    sprinkler_id: s26
+  s26:
+    type: sprinkler
+    model: impulse
+  AD_AE:
+    type: pipe
+    downstream_junction: AE
+    diameter: 1/2
+    length: 99
+    k_factor: turn
+  AD:
+    type: junction
+    downstream_pipes: [AD_AF, AD_AE, AD_AG]
+  AA_AD:
+    type: pipe
+    downstream_junction: AD
+    diameter: 1
+    length: 99
+    k_factor: thru
+  AC:
+    type: junction
+    sprinkler_id: s23
+  s23:
+    type: sprinkler
+    model: impulse
+  AA_AC:
+    type: pipe
+    downstream_junction: AC
+    diameter: 1/2
+    length: 89.1
+    k_factor: turn
+  AB:
+    type: junction
+    sprinkler_id: s24
+  s24:
+    type: sprinkler
+    model: impulse
+  AA_AB:
+    type: pipe
+    downstream_junction: AB
+    diameter: 1/2
+    length: 89.1
+    k_factor: turn
+  AA:
+    type: junction
+    downstream_pipes: [AA_AB, AA_AC, AA_AD]
+  Z_AA:
+    type: pipe
+    downstream_junction: AA
+    diameter: 1
+    length: 49.5
+    delta_z: -117.79
+    k_factor: thru
+  Z:
+    type: junction
+    downstream_pipes: Z_AA
+    sprinkler_id: s22
+  s22:
+    type: sprinkler
+    model: impulse
+    regulator_pressure: 30
+  W_Z:
+    type: pipe
+    downstream_junction: Z
+    diameter: 1
+    length: 49.5
+    k_factor: thru
+  Y:
+    type: junction
+    sprinkler_id: s20
+  s20:
+    type: sprinkler
+    model: impulse
+  W_Y:
+    type: pipe
+    downstream_junction: Y
+    diameter: 1/2
+    length: 99
+    k_factor: turn
+  X:
+    type: junction
+    sprinkler_id: s21
+  s21:
+    type: sprinkler
+    model: impulse
+  W_X:
+    type: pipe
+    downstream_junction: X
+    diameter: 1/2
+    length: 99
+    k_factor: turn
+  W:
+    type: junction
+    downstream_pipes: [W_X, W_Y, W_Z]
+  S_W:
+    type: pipe
+    downstream_junction: W
+    diameter: 1
+    length: 100
+    delta_z: -20.88
+    k_factor: thru
+  S:
+    type: junction
+    downstream_pipes: S_W
+  T_S:
+    type: pipe
+    downstream_junction: S
+    diameter: 2
+    length: 99
+    k_factor: thru
+  T:
+    type: junction
+    downstream_pipes: T_S
+    sprinkler_id: s19
+  s19:
+    type: sprinkler
+    model: impulse
+  R_T:
+    type: pipe
+    downstream_junction: T
+    diameter: 2
+    length: 66
+    delta_z: -18.29
+    k_factor: turn
+  U:
+    type: junction
+    sprinkler_id: s18
+  s18:
+    type: sprinkler
+    model: impulse
+  R_U:
+    type: pipe
+    downstream_junction: U
+    diameter: 1/2
+    length: 136
+    delta_z: -43.21
+    k_factor: turn
+  R:
+    type: junction
+    downstream_pipes: [R_U, R_T]
+  P_R:
+    type: pipe
+    downstream_junction: R
+    diameter: 2
+    length: 36
+    delta_z: -15.5
+    k_factor: thru
+  Q:
+    type: junction
+    sprinkler_id: s17
+  s17:
+    type: sprinkler
+    model: impulse
+  P_Q:
+    type: pipe
+    downstream_junction: Q
+    diameter: 1/2
+    length: 52
+    delta_z: -15.5
+    k_factor: turn
+  P:
+    type: junction
+    downstream_pipes: [P_Q, P_R]
+  N_P:
+    type: pipe
+    downstream_junction: P
+    diameter: 2
+    length: 124
+    delta_z: -30.66
+    k_factor: thru
+  O:
+    type: junction
+    sprinkler_id: s16
+  s16:
+    type: sprinkler
+    model: impulse
+  N_O:
+    type: pipe
+    downstream_junction: O
+    diameter: 1/2
+    length: 61
+    k_factor: turn
+  N:
+    type: junction
+    downstream_pipes: [N_O, N_P]
+    sprinkler_id: s15
+  s15:
+    type: sprinkler
+    model: impulse
+  L_N:
+    type: pipe
+    downstream_junction: N
+    diameter: 2
+    length: 16
+    k_factor: thru
+  M:
+    type: junction
+    sprinkler_id: s14
+  s14:
+    type: sprinkler
+    model: impulse
+  L_M:
+    type: pipe
+    downstream_junction: M
+    diameter: 1/2
+    length: 51
+    delta_z: -1.25
+    k_factor: turn
+  L:
+    type: junction
+    downstream_pipes: [L_M, L_N]
+  K_L:
+    type: pipe
+    downstream_junction: L
+    diameter: 2
+    length: 84
+    k_factor: turn
+  n13:
+    type: junction
+    sprinkler_id: s13
+  s13:
+    type: sprinkler
+    model: impulse
+  PFB5:
+    type: pipe
+    downstream_junction: n13
+    diameter: 1/2
+    length: 55.8
+    delta_z: 30.5 # Arrocding to the diagram this pipe flows uphill
+    k_factor: turn
+  K:
+    type: junction
+    downstream_pipes: [PFB5, K_L]
+  G_K:
+    type: pipe
+    downstream_junction: K
+    diameter: 2
+    length: 14
+    delta_z: -23.13
+    k_factor: turn
+  J:
+    type: junction
+    sprinkler_id: s12
+  s12:
+    type: sprinkler
+    model: impulse
+  I_J:
+    type: pipe
+    downstream_junction: J
+    diameter: 1
+    length: 155
+    delta_z: -24.88
+    k_factor: turn
+  I:
+    type: junction
+    downstream_pipes: I_J
+    sprinkler_id: s11
+  s11:
+    type: sprinkler
+    model: impulse
+  H_I:
+    type: pipe
+    downstream_junction: I
+    diameter: 1
+    length: 95
+    k_factor: turn
+  H:
+    type: junction
+    downstream_pipes: H_I
+    sprinkler_id: s10
+  s10:
+    type: sprinkler
+    model: impulse
+  G_H:
+    type: pipe
+    downstream_junction: H
+    diameter: 1
+    length: 61
+    delta_z: -35.08
+    k_factor: turn
+  G:
+    type: junction
+    downstream_pipes: [G_H, G_K]
+    sprinkler_id: s9
+  s9:
+    type: sprinkler
+    model: impulse
+  F_G:
+    type: pipe
+    downstream_junction: G
+    diameter: 2
+    length: 148
+    k_factor: turn
+  F:
+    type: junction
+    downstream_pipes: F_G
+  E_F:
+    type: pipe
+    downstream_junction: F
+    diameter: 2
+    length: 91
+    delta_z: -38.62
+    k_factor: thru
+  # The lengths and `delta_z` values in this set of unsurveyed points are
+  # even rougher estimates than the rest of the dataset. Such unsurveyed points
+  # are denoted by a sprinkler number, rather than a letter. Nodes given by a
+  # 'Z' designation are unsurveyed points without a corresponding sprinkler.
+  n8:
+    type: junction
+    sprinkler_id: s8
+  s8:
+    type: sprinkler
+    model: impulse
+  n7_n8:
+    type: pipe
+    downstream_junction: n8
+    diameter: 1
+    length: 200
+    k_factor: thru
+  n7:
+    type: junction
+    downstream_pipes: n7_n8
+    sprinkler_id: s7
+  s7:
+    type: sprinkler
+    model: impulse
+  z1_n7: # One half of PFB3
+    type: pipe
+    downstream_junction: n7
+    diameter: 1
+    length: 134.5
+    delta_z: 9.04
+    k_factor: thru
+  n6:
+    type: junction
+    sprinkler_id: s6
+  s6:
+    type: sprinkler
+    model: impulse
+  z1_n6:
+    type: pipe
+    downstream_junction: n6
+    diameter: 1
+    length: 20
+    k_factor: turn
+  z1:
+    type: junction
+    downstream_pipes: [z1_n6, z1_n7]
+  n5_z1: # Other half of PFB3
+    type: pipe
+    downstream_junction: Z1
+    diameter: 1
+    length: 134.5
+    delta_z: -9.04
+    k_factor: turn
+  n5:
+    type: junction
+    downstream_pipes: n5_z1
+    sprinkler_id: s5
+  s5:
+    type: sprinkler
+    model: impulse
+  E_n5:
+    type: pipe
+    downstream_junction: n5
+    diameter: 1
+    length: 20
+    k_factor: turn
+  E:
+    type: junction
+    downstream_pipes: [E_n5, E_F]
+  D_E:
+    type: pipe
+    downstream_junction: E
+    diameter: 2
+    length: 89
+    delta_z: -16.63
+    k_factor: thru
+  n4: # More non-survey sprinkler nodes
+    type: junction
+    sprinkler_id: s4
+  s4:
+    type: sprinkler
+    model: impulse
+  PFB2:
+    type: pipe
+    downstream_junction: n4
+    diameter: 1
+    length: 119
+    k_factor: thru
+  n3:
+    type: junction
+    downstream_pipes: PFB2
+    sprinkler_id: s3
+  s3:
+    type: sprinkler
+    model: impulse
+  D_n3:
+    type: pipe
+    downstream_junction: n3
+    diameter: 1
+    length: 20
+    k_factor: turn
+  D:
+    type: junction
+    downstream_pipes: [D_n3, D_E]
+  C_D:
+    type: pipe
+    downstream_junction: D
+    diameter: 2
+    length: 35
+    delta_z: -31.06
+    k_factor: thru
+  C:
+    type: junction
+    downstream_pipes: C_D
+  B_C:
+    type: pipe
+    downstream_junction: C
+    diameter: 2
+    length: 34
+    k_factor: thru
+  n2: # More non-survey sprinkler nodes
+    type: junction
+    sprinkler_id: s2
+  s2:
+    type: sprinkler
+    model: impulse
+  PFB1:
+    type: pipe
+    downstream_junction: n2
+    diameter: 2
+    length: 137
+    k_factor: thru
+  n1:
+    type: junction
+    downstream_pipes: PFB1
+    sprinkler_id: s1
+  s1:
+    type: sprinkler
+    model: impulse
+  B_n1:
+    type: pipe
+    downstream_junction: n1
+    diameter: 2
+    length: 20
+    k_factor: turn
+  B:
+    type: junction
+    downstream_pipes: [B_C, B_n1]
+  A_B:
+    type: pipe
+    downstream_junction: B
+    diameter: 3
+    length: 124.4
+    k_factor: thru
+  A:
+    type: junction
+    downstream_pipes: A_B
+  ut_A:
+    type: pipe
+    downstream_junction: A
+    diameter: 3
+    length: 203.6
+    delta_z: -50
+    k_factor: thru
+  ut:
+    type: junction
+    downstream_pipes: ut_A
